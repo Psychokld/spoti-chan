@@ -250,7 +250,7 @@ export default function App() {
             <div className="welcome-line"><span className="eyebrow">МЕНЬШЕ ПОИСКОВ. БОЛЬШЕ МУЗЫКИ.</span><span className="edition">CHROME EDITION / 001</span></div>
             <section className="hero" aria-labelledby="hero-title">
               <img className="hero-chrome" src="/assets/chrome-world.jpg" alt="" fetchPriority="high" />
-              <div className="hero-copy"><span className="hero-kicker"><span />ЗА ПРЕДЕЛАМИ ПРИВЫЧНОГО</span><h1 id="hero-title">Твой вайб.<br /><span>Твоя частота.</span></h1><p>Опиши настроение. Вспомни звучание.<br />Открой музыку, которую искал.</p><a className="button button-primary" href="#/finder"><Sparkles size={18} />Открыть Music Finder<ArrowUpRight size={18} /></a></div>
+              <div className="hero-copy"><span className="hero-kicker"><span />ЗА ПРЕДЕЛАМИ ПРИВЫЧНОГО</span><h1 id="hero-title">Красивая музыка<br /><span>Красивые тян</span></h1><p>Опиши настроение. Вспомни звучание.<br />Открой музыку, которую искал.</p><a className="button button-primary" href="#/finder"><Sparkles size={18} />Открыть Music Finder<ArrowUpRight size={18} /></a></div>
               <div className="hero-visual" aria-hidden="true"><span className="chrome-star">✧</span><span className="frequency-mark">01—∞</span><span className="visual-caption">FIND YOUR FREQUENCY</span></div>
               <div className="hero-bottom" aria-hidden="true"><span>SPOTI—CHAN / SOUND EXPLORATION</span><span>音楽でつながる <span className="hero-cross">✦</span></span></div>
             </section>
