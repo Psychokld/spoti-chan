@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowDownLeft, ArrowRight, ArrowUpRight, Check, ChevronRight, Disc3,
-  Headphones, Heart, House, LoaderCircle, Music2, Search, Sparkles, X
+  Heart, House, LoaderCircle, Music2, Search, Sparkles, X
 } from 'lucide-react';
 import { requestTracks } from './api.js';
 
@@ -33,12 +33,13 @@ function countTracks(count) {
 }
 
 function Artwork({ track, className = '' }) {
-  const color = ['violet', 'blue', 'orange', 'green'][(Number(track.id) - 1) % 4] || 'violet';
+  const color = ['violet', 'blue', 'silver', 'indigo'][(Number(track.id) - 1) % 4] || 'violet';
   return <div className={`artwork artwork-${color} ${className}`} aria-hidden="true">
     <div className="artwork-orbit" /><div className="artwork-orbit orbit-two" />
     <div className="artwork-center"><Disc3 size={35} strokeWidth={1} /></div>
     <span className="artwork-caption">SPOTI—CHAN<br />SOUND COLLECTION</span>
     <span className="artwork-number">0{track.id}</span>
+    <span className="artwork-edition">CHROME SERIES / 001</span>
   </div>;
 }
 
@@ -108,7 +109,7 @@ function Finder({ favorites, toggleFavorite, onSelect }) {
 
   return <>
     <div className="page-heading"><span className="eyebrow"><Sparkles size={14} /> MUSIC FINDER</span>
-      <h1>Помнишь вайб.<br /><span className="text-lime">Найдём трек.</span></h1>
+      <h1>Помнишь вайб.<br /><span className="text-accent">Найдём трек.</span></h1>
       <p>Название вылетело из головы? Опиши, что хочется услышать.</p>
     </div>
     <section className="finder-panel" aria-labelledby="finder-label">
@@ -118,7 +119,7 @@ function Finder({ favorites, toggleFavorite, onSelect }) {
           onChange={event => setDescription(event.target.value)} placeholder={EXAMPLE}
           aria-describedby="finder-help finder-limit" disabled={busy} />
         <div className="finder-form-bottom"><span id="finder-limit" className="muted">{description.length} / 500</span>
-          <button className="button button-lime" disabled={!description.trim() || busy}>
+          <button className="button button-primary" disabled={!description.trim() || busy}>
             {busy ? <LoaderCircle className="animate-spin" size={18} /> : <Sparkles size={18} />}
             {busy ? 'Ищем совпадения…' : 'Найти музыку'}{!busy && <ArrowRight size={18} />}
           </button></div>
@@ -166,7 +167,7 @@ function TrackDialog({ track, close, favorites, toggleFavorite }) {
     <span className="eyebrow">ИЗ КОЛЛЕКЦИИ SPOTI-CHAN</span><h2 id="detail-title">{track.title}</h2>
     <p className="detail-artist">{track.artist}</p>
     <div className="detail-tags">{track.tags.map(tag => <span className="tag" key={tag}>{TAGS[tag] || tag}</span>)}<span className="tag">{VOCALS[track.vocals]}</span></div>
-    <button className="button button-lime w-full" onClick={() => toggleFavorite(track.id)}>
+    <button className="button button-primary w-full" onClick={() => toggleFavorite(track.id)}>
       <Heart size={18} fill={favorites.includes(track.id) ? 'currentColor' : 'none'} />
       {favorites.includes(track.id) ? 'Убрать из избранного' : 'Добавить в избранное'}
     </button>
@@ -228,7 +229,7 @@ export default function App() {
   return <div className="app-shell">
     <a className="skip-link" href="#main" onClick={event => { event.preventDefault(); page.current?.focus(); page.current?.scrollIntoView(); }}>К содержимому</a>
     <aside className="sidebar">
-      <a className="brand" href="#/" aria-label="Spoti-Chan — обзор"><span className="brand-icon"><Headphones size={23} strokeWidth={2.5} /></span>spoti<span className="brand-light">chan</span><span className="brand-period">.</span></a>
+      <a className="brand" href="#/" aria-label="Spoti-Chan — обзор"><span className="brand-icon"><img src="/assets/chan-avatar.png" alt="" width="44" height="44" /></span><span className="brand-name">spoti<span className="brand-light">chan</span><span className="brand-period">✦</span></span></a>
       <span className="nav-label">ТВОЁ ПРОСТРАНСТВО</span>
       <nav aria-label="Основная навигация">{nav.map(({ id, href, title, icon: Icon }) => <a key={id} href={href} aria-current={route === id ? 'page' : undefined} className={`nav-item ${route === id ? 'active' : ''}`}>
         <Icon size={20} /><span>{title}</span>{id === 'finder' && <span className="nav-ai">AI</span>}
@@ -239,19 +240,22 @@ export default function App() {
     </aside>
 
     <main id="main" tabIndex={-1} ref={page} className="main-content">
-      <header className="topbar"><div className="breadcrumbs">Твоя музыка<ChevronRight size={14} /><span>{nav.find(item => item.id === route).title}</span></div>
-        <span className="demo-badge"><span className="status-dot" />DEMO CATALOG</span>
+      <header className="topbar"><div className="breadcrumbs"><span className="breadcrumb-root">Твоя музыка</span><ChevronRight size={14} /><span>{nav.find(item => item.id === route).title}</span></div>
+        <div className="topbar-identity"><span className="demo-badge"><span className="status-dot" />DEMO CATALOG</span><img className="chan-icon" src="/assets/chan-avatar.png" alt="Иконка Spoti-Chan" width="36" height="36" /></div>
       </header>
       <div className="page-content">
         {saved.warning && <p className="storage-warning" role="status">{saved.warning}</p>}
         {route === 'finder' ? <Finder favorites={saved.ids} toggleFavorite={toggleFavorite} onSelect={setSelected} /> : <>
           {route === 'home' ? <>
-            <div className="welcome-line"><span className="eyebrow">МЕНЬШЕ ПОИСКОВ. БОЛЬШЕ МУЗЫКИ.</span><span className="edition">VOL. 001 / DISCOVER</span></div>
-            <section className="hero" aria-labelledby="hero-title"><div className="hero-copy"><span className="hero-kicker"><span />ТВОЯ СЛЕДУЮЩАЯ НАХОДКА</span><h1 id="hero-title">У каждого вайба<br />есть свой трек<span>.</span></h1><p>Опиши настроение. Вспомни звучание.<br />Открой музыку, которую искал.</p><a className="button button-dark" href="#/finder"><Sparkles size={18} />Открыть Music Finder<ArrowUpRight size={18} /></a></div>
-              <div className="hero-visual" aria-hidden="true"><span className="visual-cross">✳</span><div className="record-sleeve"><span>SPOTI<br />CHAN</span><span className="sleeve-bottom">FIND YOUR<br />FREQUENCY ↗</span></div><div className="vinyl"><span className="vinyl-label"><AudioLinesIcon size={33} /><i /></span></div><span className="visual-caption">GOOD MUSIC. NEW CONNECTIONS.</span><span className="visual-spark">✦</span></div>
+            <div className="welcome-line"><span className="eyebrow">МЕНЬШЕ ПОИСКОВ. БОЛЬШЕ МУЗЫКИ.</span><span className="edition">CHROME EDITION / 001</span></div>
+            <section className="hero" aria-labelledby="hero-title">
+              <img className="hero-chrome" src="/assets/chrome-world.jpg" alt="" fetchPriority="high" />
+              <div className="hero-copy"><span className="hero-kicker"><span />ЗА ПРЕДЕЛАМИ ПРИВЫЧНОГО</span><h1 id="hero-title">Твой вайб.<br /><span>Твоя частота.</span></h1><p>Опиши настроение. Вспомни звучание.<br />Открой музыку, которую искал.</p><a className="button button-primary" href="#/finder"><Sparkles size={18} />Открыть Music Finder<ArrowUpRight size={18} /></a></div>
+              <div className="hero-visual" aria-hidden="true"><span className="chrome-star">✧</span><span className="frequency-mark">01—∞</span><span className="visual-caption">FIND YOUR FREQUENCY</span></div>
+              <div className="hero-bottom" aria-hidden="true"><span>SPOTI—CHAN / SOUND EXPLORATION</span><span>音楽でつながる <span className="hero-cross">✦</span></span></div>
             </section>
             <a className="finder-shortcut" href="#/finder"><span className="shortcut-icon"><ArrowDownLeft size={24} /></span><div><strong>«Как Linkin Park, но с женским вокалом»</strong><span>Да, так тоже можно искать. Попробуй Music Finder.</span></div><ArrowRight size={20} /></a>
-          </> : <div className="page-heading favorites-heading"><span className="eyebrow"><Heart size={14} /> ТВОЯ КОЛЛЕКЦИЯ</span><h1>На повторе.<br /><span className="text-lime">В твоём сердце.</span></h1><p>Любимые находки, сохранённые в этом браузере.</p></div>}
+          </> : <div className="page-heading favorites-heading"><span className="eyebrow"><Heart size={14} /> ТВОЯ КОЛЛЕКЦИЯ</span><h1>На повторе.<br /><span className="text-accent">В твоём сердце.</span></h1><p>Любимые находки, сохранённые в этом браузере.</p></div>}
 
           <section className="catalog-section" aria-labelledby="catalog-title" aria-busy={loading}>
             <div className="section-heading"><div><span className="eyebrow">{route === 'home' ? 'МАЛЕНЬКАЯ КОЛЛЕКЦИЯ, БОЛЬШОЙ ВАЙБ' : 'СОХРАНЕНО ТОБОЙ'}</span><h2 id="catalog-title">{route === 'home' ? 'Открой для себя' : 'Избранные треки'}<span className="count-badge">{loading || error ? '—' : visible.length}</span></h2></div>
