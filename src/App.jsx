@@ -9,6 +9,13 @@ const EXAMPLE = 'Что-то похожее на Linkin Park, но с женск
 const EXAMPLES = [EXAMPLE, 'Энергичный рок', 'Танцевальная музыка'];
 const GENRES = [['Все треки', 'all'], ['Рок', 'rock'], ['Метал', 'metal'], ['Поп', 'pop'], ['Танцевальная', 'dance']];
 const STORAGE_KEY = 'spoti-chan:favorites:v1';
+// Decorative character art, not the artists' official album covers.
+const TRACK_ART = {
+  '1': '/assets/chan-crystal.png',
+  '2': '/assets/chan-headphones.png',
+  '3': '/assets/chan-violet.png',
+  '4': '/assets/chan-electric.png'
+};
 const VOCALS = { female: 'Женский вокал', male: 'Мужской вокал' };
 const TAGS = { rock: 'Рок', metal: 'Метал', alternative: 'Альтернатива', energetic: 'Энергичный', symphonic: 'Симфонический', pop: 'Поп', funk: 'Фанк', dance: 'Танцевальный' };
 
@@ -33,13 +40,13 @@ function countTracks(count) {
 }
 
 function Artwork({ track, className = '' }) {
-  const color = ['violet', 'blue', 'silver', 'indigo'][(Number(track.id) - 1) % 4] || 'violet';
-  return <div className={`artwork artwork-${color} ${className}`} aria-hidden="true">
+  return <div className={`artwork ${className}`} aria-hidden="true">
+    <img className="artwork-image" src={TRACK_ART[track.id] || '/assets/chrome-world.jpg'} alt="" loading="lazy" decoding="async" />
     <div className="artwork-orbit" /><div className="artwork-orbit orbit-two" />
     <div className="artwork-center"><Disc3 size={35} strokeWidth={1} /></div>
     <span className="artwork-caption">SPOTI—CHAN<br />SOUND COLLECTION</span>
     <span className="artwork-number">0{track.id}</span>
-    <span className="artwork-edition">CHROME SERIES / 001</span>
+    <span className="artwork-edition">CRYSTAL SERIES / 001</span>
   </div>;
 }
 
@@ -108,7 +115,7 @@ function Finder({ favorites, toggleFavorite, onSelect }) {
   }
 
   return <>
-    <div className="page-heading"><span className="eyebrow"><Sparkles size={14} /> MUSIC FINDER</span>
+    <div className="page-heading illustrated-heading"><img className="section-portrait" src="/assets/chan-headphones.png" alt="" decoding="async" /><span className="eyebrow"><Sparkles size={14} /> MUSIC FINDER</span>
       <h1>Помнишь вайб.<br /><span className="text-accent">Найдём трек.</span></h1>
       <p>Название вылетело из головы? Опиши, что хочется услышать.</p>
     </div>
@@ -235,7 +242,7 @@ export default function App() {
         <Icon size={20} /><span>{title}</span>{id === 'finder' && <span className="nav-ai">AI</span>}
         {id === 'favorites' && favoriteCount > 0 && <span className="nav-count">{favoriteCount}</span>}
       </a>)}</nav>
-      <div className="sidebar-collection"><div className="collection-icon"><Heart size={22} /></div><h3>Только твой вайб</h3><p>Сохраняй находки —<br />пусть будут под рукой.</p><a href="#/favorites">Моя коллекция<ArrowUpRight size={16} /></a></div>
+      <div className="sidebar-collection"><img className="collection-portrait" src="/assets/chan-violet.png" alt="" loading="lazy" /><div className="collection-icon"><Heart size={22} /></div><h3>Только твой вайб</h3><p>Сохраняй находки —<br />пусть будут под рукой.</p><a href="#/favorites">Моя коллекция<ArrowUpRight size={16} /></a></div>
       <div className="sidebar-footer"><span className="sidebar-record"><Disc3 size={24} /></span><div>Made for discovery.<span>Учебный проект · v0.2</span></div></div>
     </aside>
 
@@ -255,7 +262,7 @@ export default function App() {
               <div className="hero-bottom" aria-hidden="true"><span>SPOTI—CHAN / SOUND EXPLORATION</span><span>音楽でつながる <span className="hero-cross">✦</span></span></div>
             </section>
             <a className="finder-shortcut" href="#/finder"><span className="shortcut-icon"><ArrowDownLeft size={24} /></span><div><strong>«Как Linkin Park, но с женским вокалом»</strong><span>Да, так тоже можно искать. Попробуй Music Finder.</span></div><ArrowRight size={20} /></a>
-          </> : <div className="page-heading favorites-heading"><span className="eyebrow"><Heart size={14} /> ТВОЯ КОЛЛЕКЦИЯ</span><h1>На повторе.<br /><span className="text-accent">В твоём сердце.</span></h1><p>Любимые находки, сохранённые в этом браузере.</p></div>}
+          </> : <div className="page-heading favorites-heading illustrated-heading"><img className="section-portrait" src="/assets/chan-electric.png" alt="" decoding="async" /><span className="eyebrow"><Heart size={14} /> ТВОЯ КОЛЛЕКЦИЯ</span><h1>На повторе.<br /><span className="text-accent">В твоём сердце.</span></h1><p>Любимые находки, сохранённые в этом браузере.</p></div>}
 
           <section className="catalog-section" aria-labelledby="catalog-title" aria-busy={loading}>
             <div className="section-heading"><div><span className="eyebrow">{route === 'home' ? 'МАЛЕНЬКАЯ КОЛЛЕКЦИЯ, БОЛЬШОЙ ВАЙБ' : 'СОХРАНЕНО ТОБОЙ'}</span><h2 id="catalog-title">{route === 'home' ? 'Открой для себя' : 'Избранные треки'}<span className="count-badge">{loading || error ? '—' : visible.length}</span></h2></div>
