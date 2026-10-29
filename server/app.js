@@ -1,6 +1,7 @@
 import express from 'express';
 import { tracks } from './catalog.js';
 import { findTracks } from './finder.js';
+import { fileURLToPath } from 'node:url';
 
 export const app = express();
 app.disable('x-powered-by');
@@ -16,6 +17,9 @@ app.post('/api/finder', (req, res) => {
   }
   res.json({ mode: 'demo-tags', tracks: findTracks(description.trim()) });
 });
+
+// `npm run build` creates the frontend; Express serves it with the same origin.
+app.use(express.static(fileURLToPath(new URL('../dist', import.meta.url))));
 
 app.use((err, _req, res, _next) => {
   const status = err.status === 413 ? 413 : err.status === 400 ? 400 : 500;
