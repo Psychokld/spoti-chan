@@ -16,21 +16,31 @@ const vocabulary = [
   [/\benergetic\b|энергич/iu, ['energetic']]
 ];
 
-export function findTracks(description) {
+export function parseCriteria(description) {
   const tags = [...new Set(vocabulary.flatMap(([pattern, values]) =>
     pattern.test(description) ? values : []))];
   const female = /женск|\bfemale\b/iu.test(description);
   const male = /мужск|\bmale\b/iu.test(description);
   // Contradictory vocal constraints are intentionally not guessed.
-  if (female && male) return [];
+  if (female && male) return { tags: [], vocals: null, contradictory: true };
   const vocals = female ? 'female' : male ? 'male' : null;
+  return { tags, vocals };
+}
 
-  return tracks
+export function rankTracks(catalog, { tags, vocals, contradictory, excludedTags = [] }) {
+  if (contradictory) return [];
+
+  return catalog
     .filter(track => !vocals || track.vocals === vocals)
+    .filter(track => !track.tags.some(tag => excludedTags.includes(tag)))
     .map(track => ({
       ...track,
       matchedTags: track.tags.filter(tag => tags.includes(tag))
     }))
     .filter(track => track.matchedTags.length > 0 || (vocals && tags.length === 0))
     .sort((a, b) => b.matchedTags.length - a.matchedTags.length);
+}
+
+export function findTracks(description) {
+  return rankTracks(tracks, parseCriteria(description));
 }

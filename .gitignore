@@ -4,3 +4,9 @@ node_modules/
 !.env.example
 coverage/
 dist/
+.data/
+data/
+*.sqlite*
+*.tfstate*
+.terraform/
+*.tfvars

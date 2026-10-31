@@ -16,7 +16,7 @@ export async function requestTracks(path, options = {}) {
   if (!response.ok) throw new Error(typeof data?.error === 'string' ? data.error : 'Не удалось загрузить треки. Попробуй ещё раз.');
   const valid = data && typeof data === 'object' && Array.isArray(data.tracks) && data.tracks.every(track =>
     track && typeof track === 'object' && typeof track.id === 'string' && typeof track.title === 'string' &&
-    typeof track.artist === 'string' && ['male', 'female'].includes(track.vocals) &&
+    typeof track.artist === 'string' && ['male', 'female', 'unknown'].includes(track.vocals) &&
     Array.isArray(track.tags) && track.tags.every(tag => typeof tag === 'string') &&
     (track.matchedTags === undefined || (Array.isArray(track.matchedTags) &&
       track.matchedTags.every(tag => typeof tag === 'string'))));

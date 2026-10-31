@@ -1,0 +1,64 @@
+name: spoti-chan
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: spoti-chan:local
+    restart: unless-stopped
+    init: true
+    env_file: ../.env
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      DATA_DIR: /app/data
+      APP_URL: ${APP_URL:?Set APP_URL to the public HTTPS origin}
+      SQLITE_PATH: /app/data/spoti-chan.sqlite
+      JWT_SECRET: ${JWT_SECRET:?Set a randomly generated JWT_SECRET}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?Set DATA_ENCRYPTION_KEY}
+    expose:
+      - "3001"
+    volumes:
+      - app_data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN to a DNS hostname without https://}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  app_data:
+  caddy_data:
+  caddy_config:
